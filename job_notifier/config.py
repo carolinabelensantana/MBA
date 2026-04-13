@@ -53,6 +53,11 @@ EXCLUDE_KEYWORDS = [
     "coordinator",
 ]
 
+# Empresas/plataformas que agregan vacantes entry-level — se excluyen directamente
+BLOCKED_COMPANIES = [
+    "Joinrs",
+]
+
 # Empresas de primer nivel (se muestran primero en el email)
 TOP_TIER_COMPANIES = [
     # --- LatAm Tech Unicorns ---

@@ -7,7 +7,7 @@ import logging
 import pandas as pd
 from jobspy import scrape_jobs
 
-from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD
+from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, BLOCKED_COMPANIES, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,14 @@ def is_relevant_role(title: str) -> bool:
     has_keyword = any(kw.lower() in title_lower for kw in ROLE_KEYWORDS)
     is_junior = any(ex.lower() in title_lower for ex in EXCLUDE_KEYWORDS)
     return has_keyword and not is_junior
+
+
+def is_blocked_company(company: str) -> bool:
+    """Verifica si la empresa esta en la lista de fuentes bloqueadas."""
+    if not company:
+        return False
+    company_lower = company.lower()
+    return any(bc.lower() in company_lower for bc in BLOCKED_COMPANIES)
 
 
 def is_top_tier_company(company: str) -> bool:
@@ -82,6 +90,9 @@ def scrape_all_jobs() -> pd.DataFrame:
 
     # Filtrar solo roles relevantes (por si alguna busqueda trae resultados off-topic)
     combined = combined[combined["title"].apply(is_relevant_role)]
+
+    # Excluir empresas/plataformas bloqueadas
+    combined = combined[~combined["company"].apply(is_blocked_company)]
     logger.info(f"Total tras filtrar por rol: {len(combined)} ofertas")
 
     if combined.empty:
