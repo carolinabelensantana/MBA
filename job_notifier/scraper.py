@@ -4,6 +4,7 @@ usando la biblioteca python-jobspy.
 """
 
 import logging
+import re
 import pandas as pd
 from jobspy import scrape_jobs
 
@@ -11,15 +12,25 @@ from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, BLOCKED_COMPANIES, TOP_TIER_
 
 logger = logging.getLogger(__name__)
 
+# Regex que detecta cualquier variante Unicode de guion/raya
+_UNICODE_DASHES = re.compile(
+    r'[\u00ad\u2010\u2011\u2012\u2013\u2014\u2015\u2212\ufe63\uff0d]'
+)
+
+
+def _normalize(text: str) -> str:
+    """Convierte a minusculas y reemplaza todos los guiones Unicode por ASCII '-'."""
+    return _UNICODE_DASHES.sub("-", text).lower().strip()
+
 
 def is_relevant_role(title: str) -> bool:
     """Verifica si el titulo del puesto coincide con algun keyword de rol
     y no contiene palabras que indiquen un nivel junior/entry."""
     if not title:
         return False
-    title_lower = title.lower()
-    has_keyword = any(kw.lower() in title_lower for kw in ROLE_KEYWORDS)
-    is_junior = any(ex.lower() in title_lower for ex in EXCLUDE_KEYWORDS)
+    normalized = _normalize(title)
+    has_keyword = any(_normalize(kw) in normalized for kw in ROLE_KEYWORDS)
+    is_junior = any(_normalize(ex) in normalized for ex in EXCLUDE_KEYWORDS)
     return has_keyword and not is_junior
 
 
@@ -27,16 +38,16 @@ def is_blocked_company(company: str) -> bool:
     """Verifica si la empresa esta en la lista de fuentes bloqueadas."""
     if not company:
         return False
-    company_lower = company.lower()
-    return any(bc.lower() in company_lower for bc in BLOCKED_COMPANIES)
+    normalized = _normalize(company)
+    return any(_normalize(bc) in normalized for bc in BLOCKED_COMPANIES)
 
 
 def is_top_tier_company(company: str) -> bool:
     """Verifica si la empresa esta en la lista de empresas prioritarias."""
     if not company:
         return False
-    company_lower = company.lower()
-    return any(tc.lower() in company_lower for tc in TOP_TIER_COMPANIES)
+    normalized = _normalize(company)
+    return any(_normalize(tc) in normalized for tc in TOP_TIER_COMPANIES)
 
 
 def scrape_all_jobs() -> pd.DataFrame:
