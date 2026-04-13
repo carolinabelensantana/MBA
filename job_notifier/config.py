@@ -45,6 +45,8 @@ TOP_TIER_COMPANIES = [
     "Lemon Cash",
     "Bitso",
     "OLX",
+    "PedidosYa",
+    "Pedidos Ya",
     "Rappi",
     "Kavak",
     "Pomelo",
