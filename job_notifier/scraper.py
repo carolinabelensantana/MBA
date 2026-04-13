@@ -84,16 +84,29 @@ def scrape_all_jobs() -> pd.DataFrame:
     combined = pd.concat(all_results, ignore_index=True)
     logger.info(f"Total antes de filtros: {len(combined)} ofertas")
 
+    # Normalizar columnas clave para evitar problemas con NaN
+    combined["title"] = combined["title"].fillna("").astype(str).str.strip()
+    combined["company"] = combined["company"].fillna("").astype(str).str.strip()
+
     # Eliminar duplicados por titulo + empresa
     combined = combined.drop_duplicates(subset=["title", "company"], keep="first")
     logger.info(f"Total tras deduplicar: {len(combined)} ofertas")
 
     # Filtrar solo roles relevantes (por si alguna busqueda trae resultados off-topic)
-    combined = combined[combined["title"].apply(is_relevant_role)]
+    mask_relevant = combined["title"].apply(is_relevant_role)
+    logger.info(f"Excluidos por titulo irrelevante o junior: {(~mask_relevant).sum()}")
+    for title in combined[~mask_relevant]["title"].tolist():
+        logger.info(f"  [EXCLUIDO POR TITULO] {title}")
+    combined = combined[mask_relevant]
 
     # Excluir empresas/plataformas bloqueadas
-    combined = combined[~combined["company"].apply(is_blocked_company)]
-    logger.info(f"Total tras filtrar por rol: {len(combined)} ofertas")
+    mask_not_blocked = ~combined["company"].apply(is_blocked_company)
+    logger.info(f"Excluidos por empresa bloqueada: {(~mask_not_blocked).sum()}")
+    for company in combined[~mask_not_blocked]["company"].tolist():
+        logger.info(f"  [EXCLUIDO POR EMPRESA] {company}")
+    combined = combined[mask_not_blocked]
+
+    logger.info(f"Total tras filtros: {len(combined)} ofertas")
 
     if combined.empty:
         return combined
