@@ -205,7 +205,7 @@ SEARCHES = [
 
 # Sitios donde buscar (opciones: "linkedin", "indeed", "glassdoor", "google")
 # LinkedIn puede ser lento o bloquearse a veces; indeed es el mas estable
-JOB_SITES = ["linkedin", "indeed", "glassdoor"]
+JOB_SITES = ["linkedin", "indeed"]
 
 # Cuantos resultados buscar por combinacion de busqueda + sitio
 RESULTS_PER_SEARCH = 15
