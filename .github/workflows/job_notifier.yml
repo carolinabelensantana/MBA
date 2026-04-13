@@ -1,0 +1,35 @@
+name: Daily People Jobs Notification
+
+on:
+  # Corre de lunes a viernes a las 8:00 AM hora Argentina (UTC-3 = 11:00 UTC)
+  schedule:
+    - cron: "0 11 * * 1-5"
+
+  # Permite ejecutarlo manualmente desde GitHub para probar
+  workflow_dispatch:
+
+jobs:
+  notify:
+    name: Buscar y notificar empleos
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar notificador
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: python job_notifier/notifier.py
