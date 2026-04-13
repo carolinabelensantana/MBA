@@ -7,17 +7,20 @@ import logging
 import pandas as pd
 from jobspy import scrape_jobs
 
-from config import ROLE_KEYWORDS, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD
+from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD
 
 logger = logging.getLogger(__name__)
 
 
 def is_relevant_role(title: str) -> bool:
-    """Verifica si el titulo del puesto coincide con algun keyword de rol."""
+    """Verifica si el titulo del puesto coincide con algun keyword de rol
+    y no contiene palabras que indiquen un nivel junior/entry."""
     if not title:
         return False
     title_lower = title.lower()
-    return any(kw.lower() in title_lower for kw in ROLE_KEYWORDS)
+    has_keyword = any(kw.lower() in title_lower for kw in ROLE_KEYWORDS)
+    is_junior = any(ex.lower() in title_lower for ex in EXCLUDE_KEYWORDS)
+    return has_keyword and not is_junior
 
 
 def is_top_tier_company(company: str) -> bool:

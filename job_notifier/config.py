@@ -8,6 +8,7 @@ ROLE_KEYWORDS = [
     "HRBP",
     "HR Business Partner",
     "Human Resources Business Partner",
+    "People Business Partner",
     "People Partner",
     "People Manager",
     "Head of People",
@@ -17,8 +18,10 @@ ROLE_KEYWORDS = [
     "People and Culture Manager",
     "People Operations Manager",
     "Gerente de Personas",
+    "Gerencia de Personas",
     "Gerente RRHH",
     "Gerente de Recursos Humanos",
+    "Gerencia de People",
     "Director de Personas",
     "People Director",
     "VP People",
@@ -26,6 +29,28 @@ ROLE_KEYWORDS = [
     "VP HR",
     "Chief People Officer",
     "CPO",
+]
+
+# Palabras que indican roles junior/entry-level — se excluyen automaticamente
+EXCLUDE_KEYWORDS = [
+    "entry level",
+    "entry-level",
+    "recent grad",
+    "junior",
+    "jr.",
+    " jr ",
+    "intern",
+    "internship",
+    "pasante",
+    "pasantia",
+    "pasantía",
+    "trainee",
+    "analyst",  # analista de RRHH no es management
+    "analista",
+    "asistente",
+    "assistant",
+    "coordinador",
+    "coordinator",
 ]
 
 # Empresas de primer nivel (se muestran primero en el email)
