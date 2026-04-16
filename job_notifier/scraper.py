@@ -43,18 +43,24 @@ def is_blocked_company(company: str) -> bool:
 
 
 def is_valid_location(row) -> bool:
-    """Acepta solo trabajos con ubicacion en Argentina o ubicacion desconocida."""
+    """Solo acepta trabajos donde la ubicacion menciona Argentina explicitamente."""
     location = _normalize(str(row.get("location", "") or ""))
+    company = _normalize(str(row.get("company", "") or ""))
 
-    # Ubicacion desconocida: dejar pasar
-    if not location or location in ("nan", "none"):
-        return True
-
-    # Valido si menciona Argentina
+    # Si la ubicacion menciona Argentina: aceptar
     if any(term in location for term in ARGENTINA_LOCATIONS):
         return True
 
-    # Todo lo demas: rechazar
+    # Si la ubicacion esta vacia pero la empresa tiene "usa" en el nombre: rechazar
+    if any(x in company for x in [" usa", " u.s.", "united states"]):
+        logger.info(f"  [EXCLUIDO POR UBICACION] {row.get('title', '')} - empresa: {row.get('company', '')}")
+        return False
+
+    # Ubicacion vacia: dejar pasar (puede ser un rol de Argentina sin dato)
+    if not location or location in ("nan", "none"):
+        return True
+
+    # Ubicacion presente pero no Argentina: rechazar
     logger.info(f"  [EXCLUIDO POR UBICACION] {row.get('title', '')} - {row.get('location', '')}")
     return False
 
