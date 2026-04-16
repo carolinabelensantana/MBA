@@ -155,11 +155,11 @@
       margin-bottom: 0;
     }
 
-    /* "Somos [sticker]." line — same visual weight as h1 */
+    /* "Somos pulso∿." line — same visual weight as h1 */
     .hero-somos {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
       flex-wrap: wrap;
       margin-top: 8px;
     }
@@ -180,27 +180,18 @@
       color: var(--navy);
     }
 
-    /* The inline brand sticker */
-    .brand-sticker {
+    /* "pulso" inline — misma tipografía, colores rainbow */
+    .brand-inline {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: var(--white);
-      border-radius: 18px;
-      padding: 10px 22px 10px 18px;
-      box-shadow:
-        3px 5px 24px rgba(0, 0, 0, 0.14),
-        0 0 0 1.5px rgba(255, 255, 255, 0.7);
-      transform: rotate(-1.5deg);
-      position: relative;
-      top: -4px;
+      gap: 6px;
     }
 
-    .sticker-word {
-      font-size: clamp(2rem, 5.5vw, 4.4rem);
+    .brand-inline-word {
+      font-size: clamp(3.2rem, 9vw, 7.2rem);
       font-weight: 900;
-      letter-spacing: -2px;
-      line-height: 1;
+      line-height: 0.97;
+      letter-spacing: -3.5px;
       background: linear-gradient(
         90deg,
         #FF6B6B 0%,
@@ -215,10 +206,10 @@
       background-clip: text;
     }
 
-    .sticker-wave {
+    .brand-inline-wave {
       display: flex;
       align-items: center;
-      flex-shrink: 0;
+      margin-bottom: 4px;
     }
 
     /* Subtitle */
@@ -906,6 +897,48 @@
     footer strong { color: var(--white); }
     footer .ft-wave { color: var(--teal); }
 
+    /* ── ABOUT ── */
+    .about { padding: 110px 5%; background: var(--white); }
+    .about-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-text p { color: var(--slate); font-size: 1rem; line-height: 1.78; margin-bottom: 16px; }
+    .about-visual { display: flex; flex-direction: column; gap: 16px; }
+    .about-card { display: flex; align-items: center; gap: 20px; background: #F4FAFB; border-radius: 16px; padding: 22px 24px; border: 1.5px solid #E2EBF0; transition: border-color 0.2s; }
+    .about-card:hover { border-color: var(--teal); }
+    .about-card-icon { width: 52px; height: 52px; background: rgba(10,191,207,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .about-card-text { display: flex; flex-direction: column; gap: 4px; }
+    .about-card-text strong { font-size: 0.95rem; font-weight: 700; color: var(--navy); }
+    .about-card-text span { font-size: 0.85rem; color: var(--slate); line-height: 1.45; }
+
+    /* ── FOR WHOM ── */
+    .forwhom { padding: 110px 5%; background: #F4FAFB; }
+    .forwhom-header { text-align: center; max-width: 660px; margin: 0 auto 64px; }
+    .forwhom-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .forwhom-card { background: var(--white); border: 2px solid #E2EBF0; border-radius: 20px; padding: 38px 30px; transition: border-color 0.2s, box-shadow 0.2s; }
+    .forwhom-card:hover { border-color: var(--teal); box-shadow: 0 8px 32px rgba(10,191,207,0.1); }
+    .forwhom-icon { width: 52px; height: 52px; background: rgba(10,191,207,0.1); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
+    .forwhom-card h3 { font-size: 1.25rem; font-weight: 900; letter-spacing: -0.4px; color: var(--navy); margin-bottom: 12px; }
+    .forwhom-card p { color: var(--slate); font-size: 0.92rem; line-height: 1.72; }
+
+    /* ── CONTACT ── */
+    .contact { padding: 110px 5%; background: var(--white); }
+    .contact-wrap { max-width: 640px; margin: 0 auto; }
+    .contact-header { text-align: center; margin-bottom: 52px; }
+    .contact-header .sub { color: var(--slate); font-size: 1.05rem; margin-top: 12px; line-height: 1.65; }
+    form { background: #F4FAFB; border: 1.5px solid #DDE8EF; border-radius: 24px; padding: 48px 44px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; margin-bottom: 18px; }
+    .field label { font-size: 0.8rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .field input, .field select, .field textarea { border: 1.5px solid #DDE8EF; border-radius: 10px; padding: 12px 14px; font-size: 0.93rem; font-family: inherit; color: var(--navy); background: var(--white); outline: none; resize: vertical; transition: border-color 0.2s, box-shadow 0.2s; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(10,191,207,0.12); }
+    .field input::placeholder, .field textarea::placeholder { color: #B0C8D0; }
+    .submit-btn { width: 100%; background: var(--navy); color: var(--white); border: none; border-radius: 100px; padding: 16px; font-size: 0.97rem; font-weight: 800; font-family: inherit; cursor: pointer; letter-spacing: 0.3px; margin-top: 8px; transition: background 0.2s, transform 0.18s; }
+    .submit-btn:hover { background: #162C4E; transform: translateY(-2px); }
+    .form-note { text-align: center; font-size: 0.76rem; color: #94A3B8; margin-top: 14px; }
+    .success-msg { display: none; text-align: center; padding: 40px 20px; }
+    .success-check { width: 60px; height: 60px; background: rgba(10,191,207,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 1.6rem; color: var(--teal-dark); }
+    .success-msg h3 { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .success-msg p { color: var(--slate); font-size: 0.95rem; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
       .nav-links { display: none; }
@@ -914,10 +947,8 @@
       .products-grid { grid-template-columns: 1fr; }
       .segments-grid { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr; text-align: center; }
-      .team-avatar { margin: 0 auto; }
-      .team-tags { justify-content: center; }
-      .comp-row { grid-template-columns: 2fr 1fr 1fr; }
-      .comp-row > *:nth-child(4) { display: none; }
+      .about-inner { grid-template-columns: 1fr; gap: 48px; }
+      .forwhom-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
@@ -926,7 +957,7 @@
       .hero-somos-text,
       .hero-somos-dot { letter-spacing: -2px; }
       .hero-somos { gap: 10px; }
-      .brand-sticker { padding: 8px 16px 8px 14px; border-radius: 14px; }
+      .brand-inline-word { letter-spacing: -2px; }
       .scroll-hint { display: none; }
       .form-row { grid-template-columns: 1fr; }
       form { padding: 32px 24px; }
@@ -974,21 +1005,21 @@
 
     <!-- Main headline -->
     <h1 class="hero-h1">
-      Hacemos que tus<br/>datos de equipo hablen.
+      acompañamos el crecimiento<br/>de tu equipo.
     </h1>
 
-    <!-- "Somos [sticker]." line -->
+    <!-- "Somos pulso∿." line -->
     <div class="hero-somos">
       <span class="hero-somos-text">Somos</span>
 
-      <span class="brand-sticker">
-        <span class="sticker-word">pulso</span>
-        <span class="sticker-wave">
-          <svg width="38" height="27" viewBox="0 0 38 27" fill="none" aria-hidden="true">
-            <path d="M2 14h5L10 3l5 21 5-16 4 8 7 0" stroke="url(#sw)" stroke-width="3"
+      <span class="brand-inline">
+        <span class="brand-inline-word">pulso</span>
+        <span class="brand-inline-wave">
+          <svg width="44" height="32" viewBox="0 0 44 32" fill="none" aria-hidden="true">
+            <path d="M2 17h6L11 4l6 24 6-19 5 9 8 0" stroke="url(#bw)" stroke-width="3.5"
                   stroke-linecap="round" stroke-linejoin="round"/>
             <defs>
-              <linearGradient id="sw" x1="2" y1="14" x2="36" y2="14" gradientUnits="userSpaceOnUse">
+              <linearGradient id="bw" x1="2" y1="17" x2="42" y2="17" gradientUnits="userSpaceOnUse">
                 <stop stop-color="#FF6B6B"/>
                 <stop offset="0.25" stop-color="#FFD93D"/>
                 <stop offset="0.5"  stop-color="#6BCB77"/>
@@ -1036,203 +1067,124 @@
 </section>
 
 
-<!-- PROBLEM -->
-<section class="problem" id="problema">
-  <div class="problem-grid">
-    <div class="problem-text">
-      <span class="section-label">El Problema</span>
-      <h2 class="section-h2">Las startups de LATAM deciden a ciegas</h2>
-      <p>Cada vez que una startup contrata, define sueldos o se prepara para levantar una ronda, enfrenta las mismas preguntas sin respuesta: ¿estamos pagando lo que corresponde? ¿Tenemos la estructura adecuada para nuestra etapa?</p>
-      <p>Hoy esas preguntas se responden por intuición, conversaciones informales entre founders o grupos de WhatsApp. No porque los founders sean descuidados, sino porque no existe información estructurada, local y accesible para ellos.</p>
-      <div class="problem-quote">
-        <p>"El problema no es de compensaciones. Es de decisiones de estructura tomadas a ciegas, en el momento más crítico del crecimiento."</p>
-      </div>
-    </div>
 
-    <div class="stats-grid">
-      <div class="stat-card dark">
-        <span class="num">340%</span>
-        <span class="lbl">Crecimiento del sector fintech en LATAM en 6 años</span>
+<!-- QUÉ ES PULSO -->
+<section class="about" id="que-es">
+  <div class="about-inner">
+    <div class="about-text">
+      <span class="section-label">¿Qué es Pulso?</span>
+      <h2 class="section-h2">Tomá decisiones de equipo con datos reales</h2>
+      <p>Pulso es la plataforma de inteligencia de estructura para startups de América Latina. Acompañamos a founders, CFOs y equipos de People con datos concretos para responder las preguntas más críticas del crecimiento: cuánto pagar, cómo organizarse y a qué ritmo crecer.</p>
+      <p>No somos una herramienta de RRHH. Somos una herramienta de decisión estratégica, disponible desde el primer día de tu empresa.</p>
+    </div>
+    <div class="about-visual">
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="about-card-text">
+          <strong>Datos reales</strong>
+          <span>De empresas similares a la tuya en LATAM</span>
+        </div>
       </div>
-      <div class="stat-card teal">
-        <span class="num">USD 526B</span>
-        <span class="lbl">Valuación del ecosistema startup regional hoy</span>
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="about-card-text">
+          <strong>En el momento justo</strong>
+          <span>Cuando estás contratando, definiendo bandas o preparando una ronda</span>
+        </div>
       </div>
-      <div class="stat-card light">
-        <span class="num">3.000+</span>
-        <span class="lbl">Startups tech y fintech activas en América Latina</span>
-      </div>
-      <div class="stat-card dark">
-        <span class="num">USD 1.6B</span>
-        <span class="lbl">Valuación de Pave en EE.UU. Ese mercado en LATAM está vacío.</span>
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="about-card-text">
+          <strong>Segmentado para vos</strong>
+          <span>Por industria, etapa de funding, país y función</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRODUCTS -->
+<!-- PRODUCTOS -->
 <section class="products" id="productos">
   <div class="products-header">
-    <span class="section-label">Nuestros Productos</span>
+    <span class="section-label">Qué ofrecemos</span>
     <h2 class="section-h2">Dos herramientas.<br/>Una decisión más inteligente.</h2>
-    <p class="sub">PulsoComp y PulsoOrg se ofrecen como bundle integrado: no somos una herramienta de HR, somos una herramienta de decisión estratégica para founders, CFOs y equipos de People.</p>
+    <p class="sub">PulsoComp y PulsoOrg se ofrecen como bundle integrado para darte una visión completa de tu estructura de equipo.</p>
   </div>
-
   <div class="products-grid">
-    <!-- PulsoComp -->
     <div class="product-card">
       <div class="product-pill comp">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         PulsoComp
       </div>
       <h3>Benchmarking de compensaciones</h3>
-      <p class="product-type">Salarios y beneficios comparables en tiempo real</p>
-      <p>Compará estructuras salariales y paquetes de beneficios contra datos reales de empresas similares en la región, segmentados por industria (tech, fintech, IA), etapa de funding, país y función.</p>
+      <p class="product-type">Salarios y beneficios con datos reales del ecosistema</p>
+      <p>Comparás tus estructuras salariales y paquetes de beneficios contra datos reales de empresas similares en la región. Segmentado por industria, etapa de funding, país y función.</p>
       <div class="product-answer">
         <span class="ans-label">Responde</span>
         <p>¿Estamos pagando bien para atraer y retener el talento que necesitamos?</p>
       </div>
     </div>
-
-    <!-- PulsoOrg -->
     <div class="product-card">
       <div class="product-pill org">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v3m0 3v.5M17.5 17h-3m6 0h.5"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="6" height="6" rx="1"/><rect x="16" y="7" width="6" height="6" rx="1"/><rect x="9" y="14" width="6" height="6" rx="1"/><path d="M5 13v2m14-2v2M12 14v-2M5 15h14"/></svg>
         PulsoOrg
       </div>
       <h3>Benchmarking de estructura organizacional</h3>
       <p class="product-type">Headcount y ratios por etapa de funding</p>
-      <p>Comparí la estructura de equipo —cantidad de personas por función, ratios entre áreas, momento de incorporar roles clave— contra el benchmark de empresas en la misma etapa y sector.</p>
+      <p>Entendés cómo está organizado tu equipo en comparación con empresas en tu misma etapa: cantidad de personas por área, ratios saludables y cuándo incorporar roles clave.</p>
       <div class="product-answer">
         <span class="ans-label">Responde</span>
-        <p>¿Tenemos la estructura saludable para la ronda que levantamos o que estamos por levantar?</p>
+        <p>¿Tenemos la estructura adecuada para la ronda que levantamos o que estamos por levantar?</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SEGMENTS -->
-<section class="segments" id="segmentos">
-  <div class="segments-header">
-    <span class="section-label">Para quién es Pulso</span>
-    <h2 class="section-h2">Tres segmentos.<br/>Una plataforma.</h2>
-    <p class="sub">Pulso sirve a founders, aceleradoras y fondos de VC con propuestas de valor y tickets diferenciados. El canal B2B2C con aceleradoras es especialmente estratégico en la Fase 1.</p>
+<!-- PARA QUIÉN -->
+<section class="forwhom" id="para-quien">
+  <div class="forwhom-header">
+    <span class="section-label">¿Para quién es Pulso?</span>
+    <h2 class="section-h2">Diseñado para quienes<br/>construyen equipos en LATAM</h2>
   </div>
-
-  <div class="segments-grid">
-    <div class="seg-card">
-      <div class="seg-badge b2c">B2C</div>
+  <div class="forwhom-grid">
+    <div class="forwhom-card">
+      <div class="forwhom-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
       <h3>Startups</h3>
-      <p>Founders, CFOs y líderes de People que necesitan datos para tomar decisiones de equipo en el día a día: contratar, definir bandas salariales, preparar la estructura para una ronda.</p>
-      <p class="seg-examples">Ej: Fintechs Serie A–B, startups tech de 15 a 150 empleados en LATAM</p>
-      <hr class="seg-divider"/>
-      <div class="seg-ticket-label">Ticket estimado</div>
-      <div class="seg-ticket-price">USD 3.000 – 8.000</div>
-      <div class="seg-ticket-per">por año</div>
+      <p>Founders, CFOs y líderes de People que necesitan datos para contratar, definir bandas salariales y preparar la estructura de cara a una ronda de inversión.</p>
     </div>
-
-    <div class="seg-card">
-      <div class="seg-badge b2b2c">B2B2C</div>
-      <h3>Aceleradoras</h3>
-      <p>Con un solo contrato, Pulso accede a decenas de clientes simultáneamente. Para la aceleradora es un beneficio concreto: sus startups toman mejores decisiones de equipo y crecen más sano.</p>
-      <p class="seg-examples">Ej: Endeavor, NXTP, Platanus, Wayra, Alaya Capital</p>
-      <hr class="seg-divider"/>
-      <div class="seg-ticket-label">Ticket estimado</div>
-      <div class="seg-ticket-price">USD 15.000 – 40.000</div>
-      <div class="seg-ticket-per">por año · bundle para todo el portfolio</div>
-    </div>
-
-    <div class="seg-card">
-      <div class="seg-badge b2b">B2B</div>
-      <h3>Fondos de VC</h3>
-      <p>Los fondos usan PulsoOrg para hacer due diligence: ¿tiene la startup la estructura correcta para su etapa? ¿El ratio ingenieros/producto es saludable? ¿Cuándo incorporar un CFO?</p>
-      <p class="seg-examples">Ej: Kaszek, Softbank LATAM, Sequoia Heritage, Accel</p>
-      <hr class="seg-divider"/>
-      <div class="seg-ticket-label">Ticket estimado</div>
-      <div class="seg-ticket-price">USD 20.000 – 60.000</div>
-      <div class="seg-ticket-per">por año</div>
-    </div>
-  </div>
-</section>
-
-<!-- COMPETITION -->
-<section class="competition">
-  <div class="competition-header">
-    <span class="section-label">Landscape competitivo</span>
-    <h2 class="section-h2">El mercado que nadie está mirando</h2>
-    <p class="sub">Las soluciones globales tienen datos de multinacionales. Las plataformas modernas no existen en LATAM. Pulso es la primera solución integrada Comp + Org para startups latinoamericanas.</p>
-  </div>
-
-  <div class="comp-table">
-    <div class="comp-row comp-head">
-      <div>Jugador</div>
-      <div>Datos LATAM</div>
-      <div>Precio accesible</div>
-      <div>Comp + Org</div>
-    </div>
-    <div class="comp-row comp-body">
-      <div class="comp-name">Mercer / WTW / KF<small>Consultoras globales</small></div>
-      <div class="crs">Solo multinacionales</div>
-      <div class="crs">✗</div>
-      <div class="crs">✗</div>
-    </div>
-    <div class="comp-row comp-body">
-      <div class="comp-name">Pave<small>EE.UU. · USD 1.600M</small></div>
-      <div class="crs">Solo anglosajón</div>
-      <div class="crs">✗</div>
-      <div class="crs">✗</div>
-    </div>
-    <div class="comp-row comp-body">
-      <div class="comp-name">Ravio / Figures<small>Europa</small></div>
-      <div class="crs">Solo Europa</div>
-      <div class="chk">✓</div>
-      <div class="crs">✗</div>
-    </div>
-    <div class="comp-row comp-body">
-      <div class="comp-name">Get on Board<small>Reclutamiento LATAM</small></div>
-      <div class="chk">✓</div>
-      <div class="chk">✓</div>
-      <div class="crs">✗</div>
-    </div>
-    <div class="comp-row comp-body pulso">
-      <div class="comp-name">Pulso ✦<small>Primera solución integrada en LATAM</small></div>
-      <div class="chk">✓ Nativo</div>
-      <div class="chk">✓</div>
-      <div class="chk">✓ Único</div>
-    </div>
-  </div>
-</section>
-
-<!-- TEAM -->
-<section class="team" id="nosotros">
-  <div class="team-grid">
-    <div class="team-avatar">CS</div>
-    <div class="team-info">
-      <span class="section-label">El Equipo</span>
-      <h2 class="section-h2">Carolina Santana</h2>
-      <p class="team-role">Founder · Manager de Compensaciones y Beneficios en Unilever · MBA UTDT 2025</p>
-      <p>La oportunidad fue detectada desde adentro del mercado. Al trabajar diariamente con los surveys de Mercer, WTW y Korn Ferry, Carolina identificó su principal limitación: datos de grandes multinacionales, inaccesibles e irrelevantes para startups.</p>
-      <p>Su formación legal agrega valor diferencial donde la privacidad de datos salariales, los contratos con aceleradoras y el compliance con Ley 25.326 (AR) y LGPD (BR) son críticos desde el día uno. Las primeras conversaciones con Cocos Capital y Pomelo generaron interés concreto.</p>
-      <div class="team-tags">
-        <span class="team-tag">Comp &amp; Benefits</span>
-        <span class="team-tag">Abogada</span>
-        <span class="team-tag">MBA UTDT 2025</span>
-        <span class="team-tag">Unilever</span>
-        <span class="team-tag">Ecosistema LATAM</span>
+    <div class="forwhom-card">
+      <div class="forwhom-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </div>
+      <h3>Aceleradoras e incubadoras</h3>
+      <p>Ofrecé Pulso como beneficio diferencial a todo tu portfolio. Tus startups toman mejores decisiones de equipo, crecen más sano, y eso impacta directamente en el valor que generás.</p>
+    </div>
+    <div class="forwhom-card">
+      <div class="forwhom-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ABFCF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <h3>Fondos de venture capital</h3>
+      <p>Usá PulsoOrg para analizar la estructura organizacional de tus empresas portfolio: ¿tienen el equipo adecuado para su etapa? ¿Cuándo deberían incorporar un CFO o un VP de Producto?</p>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
+<!-- CONTACTO -->
 <section class="contact" id="contacto">
   <div class="contact-wrap">
     <div class="contact-header">
-      <span class="section-label">Early Access</span>
-      <h2 class="section-h2">Sumate a la lista de espera</h2>
-      <p class="sub">Sé de las primeras startups, aceleradoras o fondos en acceder a Pulso.</p>
+      <span class="section-label">Contacto</span>
+      <h2 class="section-h2">¿Querés saber más?</h2>
+      <p class="sub">Completá el formulario y te contactamos en menos de 48 horas.</p>
     </div>
-
     <form id="contact-form" novalidate>
       <div id="form-fields">
         <div class="form-row">
@@ -1245,17 +1197,14 @@
             <input type="text" id="last" name="last" placeholder="García" required />
           </div>
         </div>
-
         <div class="field">
           <label for="email">Email de trabajo</label>
           <input type="email" id="email" name="email" placeholder="ana@startup.com" required />
         </div>
-
         <div class="field">
           <label for="company">Empresa</label>
           <input type="text" id="company" name="company" placeholder="Tu startup, aceleradora o fondo" required />
         </div>
-
         <div class="form-row">
           <div class="field">
             <label for="segment">Tipo de organización</label>
@@ -1280,20 +1229,17 @@
             </select>
           </div>
         </div>
-
         <div class="field">
-          <label for="message">¿Cuál es tu mayor desafío de estructura hoy? <span style="font-weight:400;color:#B0C8D0">(opcional)</span></label>
-          <textarea id="message" name="message" rows="3" placeholder="Ej: No sé si lo que pagamos es competitivo para retener a nuestro equipo tech..."></textarea>
+          <label for="message">¿En qué te podemos ayudar? <span style="font-weight:400;color:#B0C8D0">(opcional)</span></label>
+          <textarea id="message" name="message" rows="3" placeholder="Contanos tu situación actual..."></textarea>
         </div>
-
-        <button type="submit" class="submit-btn">Quiero acceso anticipado →</button>
-        <p class="form-note">Te contactaremos en menos de 48 horas. Sin spam, nunca.</p>
+        <button type="submit" class="submit-btn">Quiero saber más →</button>
+        <p class="form-note">Sin spam, nunca.</p>
       </div>
-
       <div class="success-msg" id="success-msg">
         <div class="success-check">✓</div>
-        <h3>¡Estás en la lista!</h3>
-        <p>Gracias por tu interés en Pulso. Te contactaremos pronto con los detalles de acceso anticipado.</p>
+        <h3>¡Gracias por escribirnos!</h3>
+        <p>Te contactaremos en menos de 48 horas.</p>
       </div>
     </form>
   </div>
@@ -1311,22 +1257,14 @@
     const success = document.getElementById('success-msg');
     const required = this.querySelectorAll('[required]');
     let valid = true;
-
     required.forEach(function(el) {
-      if (!el.value.trim()) {
-        el.style.borderColor = '#F87171';
-        valid = false;
-      } else {
-        el.style.borderColor = '';
-      }
+      if (!el.value.trim()) { el.style.borderColor = '#F87171'; valid = false; }
+      else { el.style.borderColor = ''; }
     });
-
     if (!valid) return;
-
     const btn = this.querySelector('.submit-btn');
     btn.textContent = 'Enviando…';
     btn.disabled = true;
-
     setTimeout(function() {
       fields.style.display  = 'none';
       success.style.display = 'block';
