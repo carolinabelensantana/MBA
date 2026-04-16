@@ -196,11 +196,66 @@ SEARCHES = [
     {"term": "Head of People", "location": "Argentina", "is_remote": False},
     {"term": "Gerente Recursos Humanos", "location": "Argentina", "is_remote": False},
     {"term": "Gerente de Personas", "location": "Argentina", "is_remote": False},
-    # --- Remoto global ---
-    {"term": "HRBP remote", "location": "", "is_remote": True},
-    {"term": "HR Business Partner remote LatAm", "location": "", "is_remote": True},
-    {"term": "People Partner remote", "location": "", "is_remote": True},
-    {"term": "Head of People remote", "location": "", "is_remote": True},
+    # --- Remoto global (anclado a Argentina para reducir ruido geografico) ---
+    {"term": "HRBP remote", "location": "Argentina", "is_remote": True},
+    {"term": "HR Business Partner remote", "location": "Argentina", "is_remote": True},
+    {"term": "People Partner remote", "location": "Argentina", "is_remote": True},
+    {"term": "Head of People remote", "location": "Argentina", "is_remote": True},
+]
+
+# Terminos que identifican ubicaciones validas (Argentina o verdaderamente remoto)
+ARGENTINA_LOCATIONS = [
+    "argentina",
+    "buenos aires",
+    "caba",
+    "ciudad autónoma",
+    "ciudad autonoma",
+    "córdoba",
+    "cordoba",
+    "rosario",
+    "mendoza",
+    "tucumán",
+    "tucuman",
+    "la plata",
+    "santa fe",
+    "neuquén",
+    "neuquen",
+    "mar del plata",
+    "salta",
+    "bariloche",
+    "bahía blanca",
+    "bahia blanca",
+]
+
+# Si un rol remoto menciona estos paises, probablemente requiere residencia ahi
+REMOTE_EXCLUDED_COUNTRIES = [
+    "united states",
+    "usa",
+    "u.s.",
+    "iraq",
+    "india",
+    "china",
+    "russia",
+    "pakistan",
+    "nigeria",
+    "united kingdom",
+    "germany",
+    "france",
+    "australia",
+    "canada",
+    "japan",
+    "south korea",
+    "new zealand",
+    "netherlands",
+    "spain",
+    "italy",
+    "portugal",
+    "poland",
+    "ukraine",
+    "turkey",
+    "saudi arabia",
+    "egypt",
+    "south africa",
 ]
 
 # Sitios donde buscar (opciones: "linkedin", "indeed", "glassdoor", "google")

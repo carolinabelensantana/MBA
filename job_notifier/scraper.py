@@ -8,7 +8,7 @@ import re
 import pandas as pd
 from jobspy import scrape_jobs
 
-from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, BLOCKED_COMPANIES, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD
+from config import ROLE_KEYWORDS, EXCLUDE_KEYWORDS, BLOCKED_COMPANIES, TOP_TIER_COMPANIES, SEARCHES, JOB_SITES, RESULTS_PER_SEARCH, HOURS_OLD, ARGENTINA_LOCATIONS, REMOTE_EXCLUDED_COUNTRIES
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +40,33 @@ def is_blocked_company(company: str) -> bool:
         return False
     normalized = _normalize(company)
     return any(_normalize(bc) in normalized for bc in BLOCKED_COMPANIES)
+
+
+def is_valid_location(row) -> bool:
+    """
+    Acepta el trabajo si:
+    - La ubicacion menciona Argentina, o
+    - Es remoto y la ubicacion no menciona un pais extranjero especifico.
+    Rechaza roles geolocalizados fuera de Argentina.
+    """
+    location = _normalize(str(row.get("location", "") or ""))
+    is_remote = bool(row.get("is_remote", False))
+
+    # Ubicacion desconocida: dejar pasar
+    if not location or location in ("nan", "none"):
+        return True
+
+    # Argentina siempre valida
+    if any(term in location for term in ARGENTINA_LOCATIONS):
+        return True
+
+    # Remoto: valido solo si no menciona un pais extranjero especifico
+    if is_remote:
+        return not any(country in location for country in REMOTE_EXCLUDED_COUNTRIES)
+
+    # No remoto y no Argentina: rechazar
+    logger.info(f"  [EXCLUIDO POR UBICACION] {row.get('title', '')} - {row.get('location', '')}")
+    return False
 
 
 def is_top_tier_company(company: str) -> bool:
@@ -116,6 +143,11 @@ def scrape_all_jobs() -> pd.DataFrame:
     for company in combined[~mask_not_blocked]["company"].tolist():
         logger.info(f"  [EXCLUIDO POR EMPRESA] {company}")
     combined = combined[mask_not_blocked]
+
+    # Filtrar por ubicacion geografica (solo Argentina o remoto global)
+    mask_location = combined.apply(is_valid_location, axis=1)
+    logger.info(f"Excluidos por ubicacion invalida: {(~mask_location).sum()}")
+    combined = combined[mask_location]
 
     logger.info(f"Total tras filtros: {len(combined)} ofertas")
 
