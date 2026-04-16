@@ -43,28 +43,18 @@ def is_blocked_company(company: str) -> bool:
 
 
 def is_valid_location(row) -> bool:
-    """
-    Acepta el trabajo si:
-    - La ubicacion menciona Argentina, o
-    - Es remoto y la ubicacion no menciona un pais extranjero especifico.
-    Rechaza roles geolocalizados fuera de Argentina.
-    """
+    """Acepta solo trabajos con ubicacion en Argentina o ubicacion desconocida."""
     location = _normalize(str(row.get("location", "") or ""))
-    is_remote = bool(row.get("is_remote", False))
 
     # Ubicacion desconocida: dejar pasar
     if not location or location in ("nan", "none"):
         return True
 
-    # Argentina siempre valida
+    # Valido si menciona Argentina
     if any(term in location for term in ARGENTINA_LOCATIONS):
         return True
 
-    # Remoto: valido solo si no menciona un pais extranjero especifico
-    if is_remote:
-        return not any(country in location for country in REMOTE_EXCLUDED_COUNTRIES)
-
-    # No remoto y no Argentina: rechazar
+    # Todo lo demas: rechazar
     logger.info(f"  [EXCLUIDO POR UBICACION] {row.get('title', '')} - {row.get('location', '')}")
     return False
 

@@ -189,18 +189,13 @@ TOP_TIER_COMPANIES = [
 # Configuracion de busquedas (que buscar y donde)
 # Podes agregar o quitar busquedas segun tus necesidades
 SEARCHES = [
-    # --- Argentina ---
     {"term": "HRBP", "location": "Argentina", "is_remote": False},
     {"term": "HR Business Partner", "location": "Argentina", "is_remote": False},
+    {"term": "People Business Partner", "location": "Argentina", "is_remote": False},
     {"term": "People Manager", "location": "Argentina", "is_remote": False},
     {"term": "Head of People", "location": "Argentina", "is_remote": False},
     {"term": "Gerente Recursos Humanos", "location": "Argentina", "is_remote": False},
     {"term": "Gerente de Personas", "location": "Argentina", "is_remote": False},
-    # --- Remoto global (anclado a Argentina para reducir ruido geografico) ---
-    {"term": "HRBP remote", "location": "Argentina", "is_remote": True},
-    {"term": "HR Business Partner remote", "location": "Argentina", "is_remote": True},
-    {"term": "People Partner remote", "location": "Argentina", "is_remote": True},
-    {"term": "Head of People remote", "location": "Argentina", "is_remote": True},
 ]
 
 # Terminos que identifican ubicaciones validas (Argentina o verdaderamente remoto)
