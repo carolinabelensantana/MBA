@@ -1082,7 +1082,20 @@
       .segments-grid { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr; text-align: center; }
       .hero-inner { grid-template-columns: 1fr; }
-      .hero-visual { display: none; }
+      .hero-visual {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        height: auto;
+        margin-top: 32px;
+      }
+      .insight-card { display: none; }
+      .sticker {
+        position: static;
+        transform: none !important;
+        animation: none !important;
+      }
       .about-inner { grid-template-columns: 1fr; gap: 48px; }
       .forwhom-grid { grid-template-columns: 1fr; }
     }
