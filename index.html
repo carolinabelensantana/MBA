@@ -141,9 +141,15 @@
     }
 
     .hero-inner {
-      max-width: 1000px;
+      max-width: 1200px;
       width: 100%;
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 40px;
+      align-items: center;
     }
+
+    .hero-text { max-width: 640px; }
 
     /* Main headline */
     .hero-h1 {
@@ -203,11 +209,11 @@
 
     /* Subtitle */
     .hero-sub {
-      font-size: clamp(1.1rem, 2.8vw, 1.55rem);
+      font-size: clamp(1rem, 1.7vw, 1.25rem);
       font-weight: 600;
       color: var(--navy);
       opacity: 0.78;
-      margin-top: 28px;
+      margin-top: 24px;
       letter-spacing: -0.3px;
     }
 
@@ -216,8 +222,147 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-top: 52px;
+      margin-top: 40px;
       flex-wrap: wrap;
+    }
+
+    /* ── HERO VISUAL (right side) ── */
+    .hero-visual {
+      position: relative;
+      height: 520px;
+    }
+
+    .insight-card {
+      position: absolute;
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px 22px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.5);
+    }
+
+    .card-comp {
+      top: 40px; left: 0;
+      width: 280px;
+      transform: rotate(-4deg);
+      animation: float1 6s ease-in-out infinite;
+    }
+
+    .card-org {
+      bottom: 40px; right: 20px;
+      width: 290px;
+      transform: rotate(3deg);
+      animation: float2 7s ease-in-out infinite;
+    }
+
+    @keyframes float1 {
+      0%, 100% { transform: rotate(-4deg) translateY(0); }
+      50%       { transform: rotate(-4deg) translateY(-10px); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: rotate(3deg) translateY(0); }
+      50%       { transform: rotate(3deg) translateY(10px); }
+    }
+
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--navy); color: var(--white);
+      font-size: 0.68rem; font-weight: 800;
+      padding: 4px 10px; border-radius: 100px;
+      letter-spacing: 0.3px;
+    }
+    .card-pill.org { background: #0891B2; }
+
+    .card-status {
+      font-size: 0.68rem; font-weight: 700; color: #10B981;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .card-status::before {
+      content: ''; width: 7px; height: 7px;
+      background: #10B981; border-radius: 50%;
+    }
+
+    .card-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+    .card-sub   { font-size: 0.72rem; color: var(--slate); margin-bottom: 14px; }
+
+    .card-value {
+      font-size: 1.65rem; font-weight: 900;
+      color: var(--navy); letter-spacing: -1px; line-height: 1;
+    }
+    .card-value .unit {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--slate); margin-left: 4px;
+    }
+
+    .card-bars {
+      display: flex; align-items: flex-end; gap: 5px;
+      margin-top: 14px; height: 36px;
+    }
+    .card-bar { flex: 1; background: #E2EBF0; border-radius: 3px; }
+    .card-bar.p25 { height: 45%; }
+    .card-bar.p50 { height: 75%; background: var(--teal); }
+    .card-bar.p75 { height: 100%; }
+
+    .card-legend {
+      display: flex; justify-content: space-between;
+      margin-top: 6px;
+      font-size: 0.6rem; font-weight: 600;
+      color: #94A3B8; letter-spacing: 0.5px;
+    }
+
+    .ratio-dots {
+      display: flex; gap: 3px; flex-wrap: wrap;
+      max-width: 160px; margin-top: 10px;
+    }
+    .ratio-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%; background: var(--teal);
+    }
+    .ratio-dot.pm { background: #F59E0B; }
+
+    .ratio-compare {
+      margin-top: 10px;
+      font-size: 0.7rem; color: var(--slate);
+    }
+    .ratio-compare strong { color: var(--navy); }
+
+    /* Stickers */
+    .sticker {
+      position: absolute;
+      padding: 10px 18px; border-radius: 100px;
+      font-weight: 800; font-size: 0.78rem;
+      letter-spacing: 0.4px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .sticker-latam {
+      top: 0; right: 30px;
+      background: linear-gradient(135deg, #FFD93D 0%, #FF9F45 100%);
+      color: var(--navy);
+      transform: rotate(8deg);
+      animation: wiggle1 5s ease-in-out infinite;
+    }
+
+    .sticker-real {
+      top: 240px; right: 210px;
+      background: linear-gradient(135deg, #C77DFF 0%, #4D96FF 100%);
+      color: var(--white);
+      transform: rotate(-6deg);
+      animation: wiggle2 6.5s ease-in-out infinite;
+    }
+
+    @keyframes wiggle1 {
+      0%, 100% { transform: rotate(8deg) translateY(0); }
+      50%       { transform: rotate(8deg) translateY(-6px); }
+    }
+    @keyframes wiggle2 {
+      0%, 100% { transform: rotate(-6deg) translateY(0); }
+      50%       { transform: rotate(-6deg) translateY(-8px); }
     }
 
     .btn-ghost {
@@ -936,6 +1081,8 @@
       .products-grid { grid-template-columns: 1fr; }
       .segments-grid { grid-template-columns: 1fr; }
       .team-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
       .about-inner { grid-template-columns: 1fr; gap: 48px; }
       .forwhom-grid { grid-template-columns: 1fr; }
     }
@@ -992,47 +1139,96 @@
 <section class="hero" id="home">
   <div class="hero-inner">
 
-    <!-- Main headline -->
-    <h1 class="hero-h1">
-      Acompañamos el crecimiento<br/>de tu equipo.
-    </h1>
-
-    <!-- "Somos pulso∿." line -->
-    <div class="hero-somos">
-      <span class="hero-somos-text">Somos</span>
-
-      <span class="brand-inline">
-        <span class="brand-inline-word">pulso</span>
-        <span class="brand-inline-wave">
-          <svg width="44" height="32" viewBox="0 0 44 32" fill="none" aria-hidden="true">
-            <path d="M2 17h6L11 4l6 24 6-19 5 9 8 0" stroke="white" stroke-width="3.5"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+    <!-- Text left -->
+    <div class="hero-text">
+      <h1 class="hero-h1">
+        Acompañamos el crecimiento<br/>de tu equipo.
+      </h1>
+      <div class="hero-somos">
+        <span class="hero-somos-text">Somos</span>
+        <span class="brand-inline">
+          <span class="brand-inline-word">pulso</span>
+          <span class="brand-inline-wave">
+            <svg width="44" height="32" viewBox="0 0 44 32" fill="none" aria-hidden="true">
+              <path d="M2 17h6L11 4l6 24 6-19 5 9 8 0" stroke="white" stroke-width="3.5"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </span>
-      </span>
-
-      <span class="hero-somos-dot">.</span>
+        <span class="hero-somos-dot">.</span>
+      </div>
+      <p class="hero-sub">Tu partner de estructura para crecer.</p>
+      <div class="hero-actions">
+        <a href="#contacto" class="btn-ghost">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+            <path d="M12 5v14M5 12l7 7 7-7"/>
+          </svg>
+          ¿Cuánto pagar?
+        </a>
+        <a href="#productos" class="btn-solid">
+          ¿Cómo organizarse?
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
     </div>
 
-    <!-- Subtitle -->
-    <p class="hero-sub">Tu partner de estructura para crecer.</p>
+    <!-- Visual right: insight cards + stickers -->
+    <div class="hero-visual">
 
-    <!-- CTAs -->
-    <div class="hero-actions">
-      <a href="#contacto" class="btn-ghost">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
-          <path d="M12 5v14M5 12l7 7 7-7"/>
-        </svg>
-        ¿Cuánto pagar?
-      </a>
-      <a href="#productos" class="btn-solid">
-        ¿Cómo organizarse?
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
+      <!-- Card 1: PulsoComp -->
+      <div class="insight-card card-comp">
+        <div class="card-header">
+          <span class="card-pill">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            PulsoComp
+          </span>
+          <span class="card-status">En vivo</span>
+        </div>
+        <div class="card-title">Sr. Engineer</div>
+        <div class="card-sub">Serie B · Argentina · Fintech</div>
+        <div class="card-value">USD 6.500<span class="unit">/ mes</span></div>
+        <div class="card-bars">
+          <div class="card-bar p25"></div>
+          <div class="card-bar p50"></div>
+          <div class="card-bar p75"></div>
+        </div>
+        <div class="card-legend"><span>P25</span><span>P50</span><span>P75</span></div>
+      </div>
+
+      <!-- Card 2: PulsoOrg -->
+      <div class="insight-card card-org">
+        <div class="card-header">
+          <span class="card-pill org">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><rect x="2" y="7" width="6" height="6" rx="1"/><rect x="16" y="7" width="6" height="6" rx="1"/><rect x="9" y="14" width="6" height="6" rx="1"/></svg>
+            PulsoOrg
+          </span>
+          <span class="card-status">Saludable</span>
+        </div>
+        <div class="card-title">Ratio Engineering / PM</div>
+        <div class="card-sub">Equipo de 24 personas · Serie A</div>
+        <div class="card-value" style="margin-top:6px;">12 : 1</div>
+        <div class="ratio-dots">
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot"></div><div class="ratio-dot"></div>
+          <div class="ratio-dot pm"></div>
+        </div>
+        <div class="ratio-compare">vs benchmark Serie A: <strong>10 : 1</strong></div>
+      </div>
+
+      <!-- Sticker: LATAM -->
+      <div class="sticker sticker-latam">🌎 100% LATAM</div>
+
+      <!-- Sticker: Datos reales -->
+      <div class="sticker sticker-real">⚡ Datos reales</div>
+
     </div>
 
   </div>
