@@ -133,6 +133,10 @@ def scrape_all_jobs() -> pd.DataFrame:
         logger.info(f"  [EXCLUIDO POR TITULO] {title}")
     combined = combined[mask_relevant]
 
+    if combined.empty:
+        logger.info("Sin resultados tras filtrar por rol.")
+        return combined
+
     # Excluir empresas/plataformas bloqueadas
     mask_not_blocked = ~combined["company"].apply(is_blocked_company)
     logger.info(f"Excluidos por empresa bloqueada: {(~mask_not_blocked).sum()}")
