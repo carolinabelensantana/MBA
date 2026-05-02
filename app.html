@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulso — App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: #fafafa; }
+    #root { min-height: 100vh; }
+    input[type=range] { cursor: pointer; }
+    select { cursor: pointer; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f2f4; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    const PULSO_COUNTRIES = [
+      { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
+      { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
+      { code: 'MX', name: 'Mexico', flag: '🇲🇽' },
+      { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+      { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+      { code: 'UY', name: 'Uruguay', flag: '🇺🇾' }
+    ];
+
+    const PULSO_ROLES = [
+      { id: 'eng-jr',    role: 'Software Engineer',   fn: 'Engineering', level: 'Junior',    p25: 3200,  p50: 3800,  p75: 4500,  n: 142 },
+      { id: 'eng-mid',   role: 'Software Engineer',   fn: 'Engineering', level: 'Mid',       p25: 4800,  p50: 5600,  p75: 6800,  n: 238 },
+      { id: 'eng-sr',    role: 'Software Engineer',   fn: 'Engineering', level: 'Senior',    p25: 5400,  p50: 6100,  p75: 7200,  n: 156 },
+      { id: 'eng-staff', role: 'Staff Engineer',      fn: 'Engineering', level: 'Staff',     p25: 7800,  p50: 9200,  p75: 11000, n: 48  },
+      { id: 'pm-mid',    role: 'Product Manager',     fn: 'Product',     level: 'Mid',       p25: 5200,  p50: 6000,  p75: 7100,  n: 94  },
+      { id: 'pm-sr',     role: 'Product Manager',     fn: 'Product',     level: 'Senior',    p25: 6800,  p50: 7900,  p75: 9400,  n: 67  },
+      { id: 'des-sr',    role: 'Product Designer',    fn: 'Design',      level: 'Senior',    p25: 5100,  p50: 5900,  p75: 7000,  n: 72  },
+      { id: 'data-sr',   role: 'Data Scientist',      fn: 'Data',        level: 'Senior',    p25: 6200,  p50: 7100,  p75: 8300,  n: 54  },
+      { id: 'mkt-mid',   role: 'Marketing Manager',   fn: 'Marketing',   level: 'Mid',       p25: 4400,  p50: 5200,  p75: 6200,  n: 88  },
+      { id: 'sales-sr',  role: 'Sales Lead',          fn: 'Sales',       level: 'Senior',    p25: 5800,  p50: 6700,  p75: 8100,  n: 76  },
+      { id: 'eng-lead',  role: 'Engineering Manager', fn: 'Engineering', level: 'Manager',   p25: 8200,  p50: 9800,  p75: 11600, n: 42  },
+      { id: 'cto',       role: 'CTO',                 fn: 'Engineering', level: 'Executive', p25: 12000, p50: 15000, p75: 18500, n: 28  }
+    ];
+
+    const PULSO_PEERS = [
+      { id: 'A42', mask: 'FINTECH·AR·A·68',  size: 68 },
+      { id: 'B19', mask: 'FINTECH·BR·A·54',  size: 54 },
+      { id: 'C73', mask: 'FINTECH·MX·A·71',  size: 71 },
+      { id: 'D28', mask: 'FINTECH·AR·A·49',  size: 49 },
+      { id: 'E91', mask: 'FINTECH·CL·A·62',  size: 62 },
+      { id: 'F14', mask: 'FINTECH·CO·A·58',  size: 58 }
+    ];
+
+    const PULSO_ORG_BENCH = [
+      { fn: 'Engineering', mine: 24, benchP25: 18, benchP50: 22, benchP75: 28, health: 'ok'  },
+      { fn: 'Product',     mine: 8,  benchP25: 6,  benchP50: 8,  benchP75: 11, health: 'ok'  },
+      { fn: 'Design',      mine: 5,  benchP25: 4,  benchP50: 6,  benchP75: 8,  health: 'ok'  },
+      { fn: 'Data',        mine: 4,  benchP25: 3,  benchP50: 5,  benchP75: 7,  health: 'ok'  },
+      { fn: 'Marketing',   mine: 6,  benchP25: 5,  benchP50: 7,  benchP75: 9,  health: 'ok'  },
+      { fn: 'Sales',       mine: 9,  benchP25: 7,  benchP50: 10, benchP75: 14, health: 'ok'  },
+      { fn: 'Operations',  mine: 4,  benchP25: 3,  benchP50: 5,  benchP75: 7,  health: 'ok'  },
+      { fn: 'Finance',     mine: 2,  benchP25: 2,  benchP50: 3,  benchP75: 5,  health: 'low' }
+    ];
+
+    const PULSO_RATIOS = [
+      { label: 'Eng:PM',    mine: '3.0:1', bench: '2.8:1', status: 'ok'    },
+      { label: 'Eng:Des',   mine: '4.8:1', bench: '4.2:1', status: 'watch' },
+      { label: 'GTM:R&D',   mine: '0.47',  bench: '0.52',  status: 'ok'    },
+      { label: 'Mgr span',  mine: '6.2',   bench: '6.8',   status: 'ok'    },
+      { label: 'IC:Mgr',    mine: '7.2:1', bench: '6.5:1', status: 'ok'    }
+    ];
+
+    const PULSO_FLAGS = [
+      { kind: 'retain', severity: 'high', text: 'Senior Software Engineer 12% below P50 — retention risk' },
+      { kind: 'hire',   severity: 'med',  text: 'Product Manager offers at P65 — consider P55 anchor' },
+      { kind: 'org',    severity: 'low',  text: 'Finance HC below P25 — evaluate need vs peers' },
+      { kind: 'plan',   severity: 'med',  text: 'Data Science P75 +7% (30d) — budget pressure in Q3' }
+    ];
+
+    function pulsoScatter(p25, p50, p75, n, seed) {
+      const points = [];
+      const rng = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      for (let i = 0; i < n; i++) {
+        const u = rng();
+        let val;
+        if (u < 0.25) val = p25 - (p25 - p25 * 0.7) * rng();
+        else if (u < 0.75) val = p25 + (p75 - p25) * rng();
+        else val = p75 + (p75 * 0.3) * rng();
+        points.push(Math.round(val));
+      }
+      return points;
+    }
+
+    const S = {
+      font: `'Inter', -apple-system, system-ui, sans-serif`,
+      mono: `'JetBrains Mono', ui-monospace, monospace`,
+      ink: '#0b0d10', inkSoft: '#3a3f47', inkMuted: '#6b7280', inkFaint: '#9ca3af',
+      bg: '#fafafa', surface: '#ffffff', line: '#e5e7eb', lineSoft: '#f1f2f4',
+      accent: '#4f46e5', accentSoft: '#eef2ff', accentDim: '#c7d2fe',
+      good: '#059669', watch: '#d97706', bad: '#dc2626', chipBg: '#f3f4f6',
+    };
+
+    function Chip({ children, active, onClick }) {
+      return (
+        <button onClick={onClick} style={{
+          fontFamily: S.font, fontSize: 12, fontWeight: 500, padding: '5px 10px',
+          borderRadius: 6, border: `1px solid ${active ? S.ink : S.line}`,
+          background: active ? S.ink : S.surface, color: active ? '#fff' : S.inkSoft,
+          cursor: 'pointer', whiteSpace: 'nowrap',
+        }}>{children}</button>
+      );
+    }
+
+    function Stat({ label, value, delta, tone }) {
+      const c = tone === 'good' ? S.good : tone === 'bad' ? S.bad : S.inkMuted;
+      return (
+        <div>
+          <div style={{ fontSize: 12, color: S.inkMuted, fontWeight: 500 }}>{label}</div>
+          <div style={{ fontSize: 26, color: S.ink, marginTop: 6, fontWeight: 600, letterSpacing: -0.4 }}>{value}</div>
+          {delta && <div style={{ fontSize: 12, color: c, marginTop: 4, fontWeight: 500 }}>{delta}</div>}
+        </div>
+      );
+    }
+
+    function Sidebar({ nav, setNav, showOrg }) {
+      const items = [
+        { id: 'home',       label: 'Home',         icon: '▢' },
+        { id: 'comp',       label: 'Compensation',  icon: '◈', section: 'PulsoComp' },
+        { id: 'role',       label: 'Role detail',   icon: '·', indent: true },
+        { id: 'bands',      label: 'Bands',         icon: '·', indent: true },
+        showOrg && { id: 'org',    label: 'Structure', icon: '◇', section: 'PulsoOrg' },
+        showOrg && { id: 'ratios', label: 'Ratios',    icon: '·', indent: true },
+        { id: 'contribute', label: 'Contribute',    icon: '↑', section: 'Data' },
+        { id: 'settings',   label: 'Settings',      icon: '⚙' },
+      ].filter(Boolean);
+
+      return (
+        <aside style={{ width: 220, borderRight: `1px solid ${S.line}`, padding: '18px 12px', background: S.surface, display: 'flex', flexDirection: 'column', gap: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px 18px' }}>
+            <div style={{ width: 22, height: 22, borderRadius: 6, background: S.accent, display: 'grid', placeItems: 'center', color: '#fff', fontSize: 12, fontWeight: 700 }}>P</div>
+            <span style={{ fontSize: 14, fontWeight: 600, color: S.ink, letterSpacing: -0.2 }}>Pulso</span>
+            <span style={{ marginLeft: 'auto', fontSize: 10, fontFamily: S.mono, color: S.inkFaint, padding: '2px 6px', background: S.chipBg, borderRadius: 4 }}>v0.9</span>
+          </div>
+          {items.map(it => (
+            <React.Fragment key={it.id}>
+              {it.section && <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.8, color: S.inkFaint, fontWeight: 600, margin: '14px 8px 6px' }}>{it.section}</div>}
+              <button onClick={() => setNav(it.id)} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: it.indent ? '6px 10px 6px 24px' : '6px 10px',
+                background: nav === it.id ? S.chipBg : 'transparent',
+                border: 'none', borderRadius: 6, cursor: 'pointer',
+                fontSize: 13, color: nav === it.id ? S.ink : S.inkSoft,
+                fontWeight: nav === it.id ? 500 : 400, textAlign: 'left',
+              }}>
+                <span style={{ fontSize: 10, color: S.inkFaint, width: 12 }}>{it.icon}</span>
+                {it.label}
+              </button>
+            </React.Fragment>
+          ))}
+          <div style={{ flex: 1 }} />
+          <div style={{ padding: 12, background: S.bg, borderRadius: 8, fontSize: 12, color: S.inkSoft }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontWeight: 500, color: S.ink }}>Data coverage</span>
+              <span style={{ color: S.good, fontWeight: 500 }}>94%</span>
+            </div>
+            <div style={{ height: 4, background: S.line, borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ width: '94%', height: 4, background: S.accent }} />
+            </div>
+          </div>
+        </aside>
+      );
+    }
+
+    function Topbar() {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 24px', borderBottom: `1px solid ${S.line}`, background: S.surface }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 22, height: 22, borderRadius: 5, background: S.ink, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 600 }}>M</div>
+            <span style={{ fontSize: 13, fontWeight: 500, color: S.ink }}>Mirador Labs</span>
+            <span style={{ fontSize: 11, padding: '2px 7px', background: S.accentSoft, color: S.accent, borderRadius: 4, fontWeight: 500 }}>Series A</span>
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', border: `1px solid ${S.line}`, borderRadius: 6, fontSize: 12, color: S.inkMuted, width: 300 }}>
+            <span>⌕</span><span>Search roles, bands, peers</span>
+            <span style={{ marginLeft: 'auto', fontFamily: S.mono, fontSize: 10 }}>⌘K</span>
+          </div>
+          <button style={{ padding: '7px 12px', background: S.ink, color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer' }}>Contribute data</button>
+        </div>
+      );
+    }
+
+    function Home({ setNav, showOrg }) {
+      return (
+        <div style={{ padding: '24px 28px 60px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 18 }}>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 600, color: S.ink, letterSpacing: -0.3 }}>Good morning, Carolina</div>
+              <div style={{ fontSize: 13, color: S.inkMuted, marginTop: 4 }}>Fri · Apr 24 · Peer set: Fintech · Series A · LATAM · 284 peers</div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button style={{ padding: '7px 12px', background: S.surface, color: S.ink, border: `1px solid ${S.line}`, borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer' }}>Export PDF</button>
+              <button style={{ padding: '7px 12px', background: S.accent, color: '#fff', border: 'none', borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer' }}>Share report</button>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 22 }}>
+            {[
+              { label: 'Bands at P50+',     value: '7/12',  delta: '+2 since Mar',        tone: 'good'  },
+              { label: 'Median eng. salary', value: '$6,100', delta: '+4.2% · 30d',         tone: 'good'  },
+              { label: 'Retention risk',     value: '2 IC',  delta: 'Both below P25',       tone: 'bad'   },
+              showOrg
+                ? { label: 'Org health',    value: '8/9',   delta: 'Data function low',    tone: 'watch' }
+                : { label: 'Open reqs',     value: '7',     delta: '3 above P75',          tone: 'watch' },
+            ].map((s, i) => (
+              <div key={i} style={{ padding: 16, background: S.surface, border: `1px solid ${S.line}`, borderRadius: 8 }}>
+                <Stat {...s} />
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1.7fr 1fr', gap: 16 }}>
+            <section style={{ background: S.surface, border: `1px solid ${S.line}`, borderRadius: 8, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: `1px solid ${S.line}` }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: S.ink }}>Flags</div>
+                <div style={{ fontSize: 12, color: S.inkMuted }}>4 open · week of Apr 20</div>
+              </div>
+              {PULSO_FLAGS.map((f, i) => {
+                const tone = f.severity === 'high' ? S.bad : f.severity === 'med' ? S.watch : S.good;
+                const tag  = f.kind === 'hire' ? 'Hiring' : f.kind === 'retain' ? 'Retention' : f.kind === 'org' ? 'Structure' : 'Planning';
+                return (
+                  <div key={i} style={{ display: 'grid', gridTemplateColumns: '90px 1fr auto', gap: 12, padding: '14px 16px', borderBottom: i < 3 ? `1px solid ${S.lineSoft}` : 'none', alignItems: 'center' }}>
+                    <span style={{ fontSize: 11, padding: '3px 8px', background: `${tone}18`, color: tone, borderRadius: 999, fontWeight: 500, textAlign: 'center' }}>{tag}</span>
+                    <div style={{ fontSize: 13, color: S.ink, lineHeight: 1.45 }}>{f.text}</div>
+                    <button onClick={() => setNav(f.kind === 'org' ? 'org' : 'comp')} style={{ fontSize: 12, color: S.accent, background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 500 }}>Open →</button>
+                  </div>
+                );
+              })}
+            </section>
+            <section style={{ background: S.surface, border: `1px solid ${S.line}`, borderRadius: 8, overflow: 'hidden' }}>
+              <div style={{ padding: '14px 16px', borderBottom: `1px solid ${S.line}`, fontSize: 14, fontWeight: 600, color: S.ink }}>Market this week</div>
+              {[
+                { t: 'Senior FE bands moved +4.2%',         s: 'Fintech · AR · 30d'    },
+                { t: 'Two peers added a Head of Data',       s: 'Series A · LATAM'      },
+                { t: 'CFO P75 up 7%',                        s: 'Cross-sector'          },
+                { t: 'Eng:PM ratio tightened to 9.6:1',     s: 'Series A cohort'       },
+              ].map((x, i, a) => (
+                <div key={i} style={{ padding: '12px 16px', borderBottom: i < a.length - 1 ? `1px solid ${S.lineSoft}` : 'none' }}>
+                  <div style={{ fontSize: 13, color: S.ink, lineHeight: 1.4 }}>{x.t}</div>
+                  <div style={{ fontSize: 11, color: S.inkMuted, marginTop: 3 }}>{x.s}</div>
+                </div>
+              ))}
+            </section>
+          </div>
+        </div>
+      );
+    }
+
+    function Row({ r, cm, onOpen }) {
+      const [hover, setHover] = useState(false);
+      const p25 = Math.round(r.p25 * cm), p50 = Math.round(r.p50 * cm), p75 = Math.round(r.p75 * cm);
+      const GMAX = 18000;
+      return (
+        <div onClick={onOpen} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{
+          display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.8fr 0.9fr 0.9fr 0.9fr 1.8fr 0.6fr', gap: 0,
+          padding: '11px 16px', borderBottom: `1px solid ${S.lineSoft}`,
+          background: hover ? S.bg : 'transparent', cursor: 'pointer', fontSize: 13, alignItems: 'center',
+        }}>
+          <div style={{ color: S.ink, fontWeight: 500 }}>{r.role}</div>
+          <div style={{ color: S.inkSoft }}>{r.fn}</div>
+          <div style={{ color: S.inkSoft }}>{r.level}</div>
+          <div style={{ fontFamily: S.mono, fontSize: 12, color: S.inkMuted, textAlign: 'right' }}>${p25.toLocaleString()}</div>
+          <div style={{ fontFamily: S.mono, fontSize: 12, color: S.ink, textAlign: 'right', fontWeight: 600 }}>${p50.toLocaleString()}</div>
+          <div style={{ fontFamily: S.mono, fontSize: 12, color: S.inkMuted, textAlign: 'right' }}>${p75.toLocaleString()}</div>
+          <div style={{ position: 'relative', height: 18, marginLeft: 12, marginRight: 4 }}>
+            <div style={{ position: 'absolute', top: 8, left: 0, right: 0, height: 2, background: S.lineSoft, borderRadius: 1 }} />
+            <div style={{ position: 'absolute', top: 5, left: `${(p25/GMAX)*100}%`, width: `${((p75-p25)/GMAX)*100}%`, height: 8, background: S.accentDim, borderRadius: 4 }} />
+            <div style={{ position: 'absolute', top: 2, left: `calc(${(p50/GMAX)*100}% - 4px)`, width: 8, height: 14, background: S.accent, borderRadius: 2 }} />
+          </div>
+          <div style={{ fontFamily: S.mono, fontSize: 11, color: S.inkMuted, textAlign: 'right' }}>{r.n}</div>
+        </div>
+      );
+    }
+
+    function Comp({ setNav, setSelectedRoleId, filters, setFilters }) {
+      const fns = ['All', ...Array.from(new Set(PULSO_ROLES.map(r => r.fn)))];
+      const rows = useMemo(() => PULSO_ROLES.filter(r => {
+        if (filters.fn !== 'All' && r.fn !== filters.fn) return false;
+        if (filters.level !== 'All' && r.level !== filters.level) return false;
+        return true;
+      }), [filters]);
+      const cm = { AR:1, BR:1.06, MX:1.03, CO:0.9, CL:0.98, UY:0.95 }[filters.country] || 1;
+
+      return (
+        <div style={{ padding: '24px 28px 60px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 }}>
+            <div style={{ fontSize: 22, fontWeight: 600, color: S.ink, letterSpacing: -0.3 }}>Compensation explorer</div>
+            <div style={{ fontSize: 12, color: S.inkMuted }}>{rows.length} roles · base USD/mo · {PULSO_COUNTRIES.find(c => c.code === filters.country)?.name}</div>
+          </div>
+          <div style={{ fontSize: 13, color: S.inkMuted, marginBottom: 20 }}>Peer set: Fintech · Series A · 40–120 FTE · last 90 days</div>
+
+          <div style={{ display: 'flex', gap: 18, padding: '12px 14px', background: S.surface, border: `1px solid ${S.line}`, borderRadius: 8, marginBottom: 14, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: S.inkMuted }}>Function</span>
+              {fns.map(f => <Chip key={f} active={filters.fn === f} onClick={() => setFilters({...filters, fn: f})}>{f}</Chip>)}
+            </div>
+            <div style={{ width: 1, background: S.line }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: S.inkMuted }}>Level</span>
+              {['All','Junior','Mid','Senior','Staff','Manager','Executive'].map(l => <Chip key={l} active={filters.level === l} onClick={() => setFilters({...filters, level: l})}>{l}</Chip>)}
+            </div>
+            <div style={{ width: 1, background: S.line }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, fontWeight: 500, color: S.inkMuted }}>Country</span>
+              {PULSO_COUNTRIES.map(c => <Chip key={c.code} active={filters.country === c.code} onClick={() => setFilters({...filters, country: c.code})}>{c.flag} {c.code}</Chip>)}
+            </div>
+          </div>
+
+          <div style={{ background: S.surface, border: `1px solid ${S.line}`, borderRadius: 8, overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 0.8fr 0.9fr 0.9fr 0.9fr 1.8fr 0.6fr', padding: '10px 16px', background: S.bg, fontSize: 11, fontWeight: 600, color: S.inkMuted, textTransform: 'uppercase', letterSpacing: 0.4, borderBottom: `1px solid ${S.line}` }}>
+              <div>Role</div><div>Function</div><div>Level</div>
+              <div style={{textAlign:'right'}}>P25</div><div style={{textAlign:'right'}}>P50</div><div style={{textAlign:'right'}}>P75</div>
+              <div>Band</div><div style={{textAlign:'right'}}>n</div>
+            </div>
+            {rows.map(r => <Row key={r.id} r={r} cm={cm} onOpen={() => { setSelectedRoleId(r.id); setNav('role'); }} />)}
+          </div>
+        </div>
+      );
+    }
+
+    function RoleDetail({ setNav, selectedRoleId }) {
+      const r = PULSO_ROLES.find(x => x.id === selectedRoleId) || PULSO_ROLES[2];
+      const scatter = useMemo(() => pulsoScatter(r.p25, r.p50, r.p75, r.n, r.id.length), [r]);
+      const max = Math.max(...scatter, r.p75*1.3), min = Math.min(...scatter, r.p25*0.7);
+      const BINS = 18;
+      const hist = useMemo(() => {
+        const b = Array(BINS).fill(0);
+        scatter.forEach(v => { const idx = Math.min(BINS-1, Math.floor(((v-min)/(max-min))*BINS)); b[idx]++; });
+        return b;
+      }, [scatter, min, max]);
+      const hmax = Math.max(...hist);
+      const mine = 5400;
+
+      return (
+        <div style={{ padding: '24px 28px 60px' }}>
+          <button onClick={() => setNav('comp')} style={{ background:'transparent', border:'none', fontSize:12, color:S.inkMuted, cursor:'pointer', padding:0, marginBottom:10 }}>← Explorer</button>
+          <div style={{ display:'flex', alignItems:'baseline', gap:10, marginBottom:3 }}>
+            <div style={{ fontSize:22, fontWeight:600, color:S.ink, letterSpacing:-0.3 }}>{r.role}</div>
+            <span style={{ fontSize:11, padding:'2px 7px', background:S.chipBg, color:S.inkSoft, borderRadius:4, fontWeight:500 }}>{r.level}</span>
+            <span style={{ fontSize:11, padding:'2px 7px', background:S.accentSoft, color:S.accent, borderRadius:4, fontWeight:500 }}>{r.fn}</span>
+          </div>
+          <div style={{ fontSize:13, color:S.inkMuted, marginBottom:20 }}>{r.n} data points · {PULSO_PEERS.length*6} peer companies · updated 3d ago</div>
+
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:14, marginBottom:22 }}>
+            {[
+              { label:'P25',          value:`$${r.p25.toLocaleString()}` },
+              { label:'Median (P50)', value:`$${r.p50.toLocaleString()}` },
+              { label:'P75',          value:`$${r.p75.toLocaleString()}` },
+              { label:'Your offer',   value:`$${mine.toLocaleString()}`, delta:'12% below P50', tone:'bad' },
+            ].map((s,i) => (
+              <div key={i} style={{ padding:16, background:S.surface, border:`1px solid ${i===3?S.bad:S.line}`, borderRadius:8 }}>
+                <Stat {...s} />
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding:22, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:S.ink, marginBottom:14 }}>Distribution</div>
+            <div style={{ display:'flex', alignItems:'flex-end', gap:3, height:110, marginBottom:6 }}>
+              {hist.map((h,i) => {
+                const v = (i/BINS)*(max-min)+min;
+                const inBand = v>=r.p25 && v<=r.p75;
+                return <div key={i} style={{ flex:1, height:`${Math.max(4,(h/hmax)*110)}px`, background:inBand?S.accent:S.accentDim, borderRadius:'2px 2px 0 0' }} />;
+              })}
+            </div>
+            <div style={{ position:'relative', height:36, marginTop:2 }}>
+              <div style={{ position:'absolute', top:0, left:0, right:0, height:1, background:S.line }} />
+              {[{v:r.p25,l:'P25'},{v:r.p50,l:'P50'},{v:r.p75,l:'P75'},{v:mine,l:'You',h:true}].map((m,i) => {
+                const left = ((m.v-min)/(max-min))*100;
+                return (
+                  <div key={i} style={{ position:'absolute', top:0, left:`${left}%`, transform:'translateX(-50%)', textAlign:'center' }}>
+                    <div style={{ width:1, height:8, background:m.h?S.ink:S.inkFaint, margin:'0 auto' }} />
+                    <div style={{ fontSize:10, color:m.h?S.ink:S.inkMuted, fontWeight:m.h?600:500, marginTop:3 }}>{m.l}</div>
+                    <div style={{ fontSize:10, fontFamily:S.mono, color:S.inkMuted }}>${m.v.toLocaleString()}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginTop:20 }}>
+            <div style={{ padding:18, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+              <div style={{ fontSize:14, fontWeight:600, color:S.ink, marginBottom:12 }}>Package composition</div>
+              {[['Base',78,`$${r.p50.toLocaleString()}`],['Variable',12,'$732'],['Equity',7,'$427'],['Benefits',3,'$183']].map(([l,p,v],i) => (
+                <div key={i} style={{ display:'grid', gridTemplateColumns:'80px 1fr 50px 70px', gap:12, alignItems:'center', padding:'8px 0', borderBottom:i<3?`1px solid ${S.lineSoft}`:'none' }}>
+                  <div style={{ fontSize:12, color:S.ink, fontWeight:500 }}>{l}</div>
+                  <div style={{ height:6, background:S.lineSoft, borderRadius:3, overflow:'hidden' }}>
+                    <div style={{ height:6, width:`${p}%`, background:S.accent }} />
+                  </div>
+                  <div style={{ fontFamily:S.mono, fontSize:11, color:S.inkMuted, textAlign:'right' }}>{p}%</div>
+                  <div style={{ fontFamily:S.mono, fontSize:11, color:S.ink, textAlign:'right' }}>{v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ padding:18, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+              <div style={{ fontSize:14, fontWeight:600, color:S.ink, marginBottom:12 }}>Peers in cohort</div>
+              {PULSO_PEERS.map((p,i) => (
+                <div key={p.id} style={{ display:'grid', gridTemplateColumns:'28px 1fr auto', gap:10, padding:'8px 0', borderBottom:i<5?`1px solid ${S.lineSoft}`:'none', alignItems:'center' }}>
+                  <div style={{ width:22, height:22, borderRadius:5, background:S.chipBg, color:S.inkSoft, display:'grid', placeItems:'center', fontSize:10, fontWeight:600 }}>{p.id}</div>
+                  <div>
+                    <div style={{ fontSize:12, fontWeight:500, color:S.ink }}>Company {p.id}</div>
+                    <div style={{ fontSize:10, color:S.inkMuted }}>{p.mask}</div>
+                  </div>
+                  <div style={{ fontFamily:S.mono, fontSize:11, color:S.inkMuted }}>{p.size}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Bands() {
+      const [anchor, setAnchor] = useState(50);
+      const [spread, setSpread] = useState(30);
+      const [selRole, setSelRole] = useState(PULSO_ROLES[2]);
+      const p25 = Math.round(selRole.p50*(1-spread/200)*(anchor/50));
+      const p50 = Math.round(selRole.p50*(anchor/50));
+      const p75 = Math.round(selRole.p50*(1+spread/200)*(anchor/50));
+      return (
+        <div style={{ padding:'24px 28px 60px' }}>
+          <div style={{ fontSize:22, fontWeight:600, color:S.ink, letterSpacing:-0.3, marginBottom:4 }}>Band builder</div>
+          <div style={{ fontSize:13, color:S.inkMuted, marginBottom:20 }}>Anchor to the market, tune spread, ship a policy</div>
+          <div style={{ display:'grid', gridTemplateColumns:'300px 1fr', gap:16 }}>
+            <aside style={{ padding:18, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8, height:'fit-content' }}>
+              <div style={{ fontSize:11, fontWeight:600, color:S.inkMuted, textTransform:'uppercase', letterSpacing:0.4, marginBottom:6 }}>Role</div>
+              <select value={selRole.id} onChange={e => setSelRole(PULSO_ROLES.find(x=>x.id===e.target.value))} style={{ width:'100%', padding:9, fontSize:13, borderRadius:6, border:`1px solid ${S.line}`, marginBottom:18, background:S.surface, color:S.ink }}>
+                {PULSO_ROLES.map(x => <option key={x.id} value={x.id}>{x.role} · {x.level}</option>)}
+              </select>
+              <div style={{ fontSize:11, fontWeight:600, color:S.inkMuted, textTransform:'uppercase', letterSpacing:0.4, marginBottom:6 }}>Anchor <span style={{color:S.ink,marginLeft:4}}>P{anchor}</span></div>
+              <input type="range" min="25" max="75" value={anchor} onChange={e=>setAnchor(+e.target.value)} style={{ width:'100%', accentColor:S.accent, marginBottom:18 }} />
+              <div style={{ fontSize:11, fontWeight:600, color:S.inkMuted, textTransform:'uppercase', letterSpacing:0.4, marginBottom:6 }}>Spread <span style={{color:S.ink,marginLeft:4}}>±{Math.round(spread/2)}%</span></div>
+              <input type="range" min="10" max="60" value={spread} onChange={e=>setSpread(+e.target.value)} style={{ width:'100%', accentColor:S.accent, marginBottom:18 }} />
+              <div style={{ padding:12, background:S.bg, borderRadius:6, fontFamily:S.mono, fontSize:12, color:S.ink }}>
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0' }}><span style={{color:S.inkMuted}}>Min</span><span>${p25.toLocaleString()}</span></div>
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0' }}><span style={{color:S.inkMuted}}>Mid</span><span style={{fontWeight:600}}>${p50.toLocaleString()}</span></div>
+                <div style={{ display:'flex', justifyContent:'space-between', padding:'3px 0' }}><span style={{color:S.inkMuted}}>Max</span><span>${p75.toLocaleString()}</span></div>
+              </div>
+              <button style={{ width:'100%', marginTop:14, padding:'10px 14px', background:S.accent, color:'#fff', border:'none', borderRadius:6, fontSize:13, fontWeight:500, cursor:'pointer' }}>Export policy</button>
+            </aside>
+            <div style={{ padding:22, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+              <div style={{ fontSize:11, fontWeight:600, color:S.inkMuted, textTransform:'uppercase', letterSpacing:0.4, marginBottom:4 }}>Preview</div>
+              <div style={{ fontSize:28, fontWeight:600, color:S.ink, letterSpacing:-0.5 }}>${p25.toLocaleString()} – ${p75.toLocaleString()}</div>
+              <div style={{ fontSize:12, color:S.inkMuted, marginTop:4 }}>{selRole.role} · {selRole.level}</div>
+              <div style={{ position:'relative', height:50, marginTop:26 }}>
+                <div style={{ position:'absolute', top:22, left:0, right:0, height:3, background:S.lineSoft, borderRadius:2 }} />
+                <div style={{ position:'absolute', top:18, left:`${(selRole.p25/(selRole.p75*1.4))*100}%`, width:`${((selRole.p75-selRole.p25)/(selRole.p75*1.4))*100}%`, height:10, background:S.accentDim, borderRadius:5, opacity:0.7 }} />
+                <div style={{ position:'absolute', top:14, left:`${(p25/(selRole.p75*1.4))*100}%`, width:`${((p75-p25)/(selRole.p75*1.4))*100}%`, height:18, background:S.accent, borderRadius:4 }} />
+              </div>
+              <div style={{ display:'flex', justifyContent:'space-between', marginTop:8, fontSize:10, fontFamily:S.mono, color:S.inkMuted }}>
+                <span>Market P25 ${selRole.p25.toLocaleString()}</span>
+                <span>Market P75 ${selRole.p75.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function Org() {
+      return (
+        <div style={{ padding:'24px 28px 60px' }}>
+          <div style={{ fontSize:22, fontWeight:600, color:S.ink, letterSpacing:-0.3 }}>Org structure</div>
+          <div style={{ fontSize:13, color:S.inkMuted, marginBottom:20 }}>62 people · 47 peers in Fintech · Series A · LATAM</div>
+          <div style={{ background:S.surface, border:`1px solid ${S.line}`, borderRadius:8, overflow:'hidden', marginBottom:18 }}>
+            <div style={{ padding:'14px 16px', borderBottom:`1px solid ${S.line}`, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+              <div style={{ fontSize:14, fontWeight:600, color:S.ink }}>Headcount by function</div>
+              <div style={{ fontSize:12, color:S.inkMuted }}>Bar: you · Ring: benchmark P25–P75</div>
+            </div>
+            {PULSO_ORG_BENCH.map((x,i) => {
+              const max=30, tone=x.health==='low'?S.watch:S.good;
+              return (
+                <div key={i} style={{ display:'grid', gridTemplateColumns:'140px 1fr 60px 60px', gap:12, padding:'12px 16px', borderBottom:i<PULSO_ORG_BENCH.length-1?`1px solid ${S.lineSoft}`:'none', alignItems:'center' }}>
+                  <div style={{ fontSize:13, color:S.ink, fontWeight:500 }}>{x.fn}</div>
+                  <div style={{ position:'relative', height:22 }}>
+                    <div style={{ position:'absolute', top:10, left:0, right:0, height:1, background:S.lineSoft }} />
+                    <div style={{ position:'absolute', top:6, left:`${(x.benchP25/max)*100}%`, width:`${((x.benchP75-x.benchP25)/max)*100}%`, height:10, border:`1px solid ${S.inkFaint}`, borderRadius:5 }} />
+                    <div style={{ position:'absolute', top:3, left:`calc(${(x.benchP50/max)*100}% - 1px)`, width:2, height:16, background:S.inkMuted }} />
+                    <div style={{ position:'absolute', top:6, left:0, width:`${(x.mine/max)*100}%`, height:10, background:tone, borderRadius:5 }} />
+                  </div>
+                  <div style={{ fontSize:12, fontFamily:S.mono, color:S.ink, textAlign:'right', fontWeight:600 }}>{x.mine}</div>
+                  <div style={{ fontSize:12, fontFamily:S.mono, color:S.inkMuted, textAlign:'right' }}>{x.benchP50}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:14, marginBottom:18 }}>
+            {PULSO_RATIOS.map((r,i) => {
+              const tone=r.status==='watch'?S.watch:S.good;
+              return (
+                <div key={i} style={{ padding:14, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+                  <div style={{ fontSize:11, color:S.inkMuted, fontWeight:500 }}>{r.label}</div>
+                  <div style={{ fontSize:22, fontWeight:600, color:S.ink, marginTop:6, letterSpacing:-0.3 }}>{r.mine}</div>
+                  <div style={{ fontSize:11, color:tone, fontWeight:500, marginTop:3 }}>vs {r.bench}</div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ background:S.surface, border:`1px solid ${S.line}`, borderRadius:8, overflow:'hidden' }}>
+            <div style={{ padding:'14px 16px', borderBottom:`1px solid ${S.line}`, fontSize:14, fontWeight:600, color:S.ink }}>Suggested next hires</div>
+            {[
+              { role:'Senior Data Scientist', reason:'Data at P25. Peers add 1.6 before Series B.', when:'Q2 2026', cost:'$6.8k' },
+              { role:'Lead Product Manager',  reason:'Eng:PM = 12:1 vs cohort 10:1.',               when:'Q2 2026', cost:'$8.7k' },
+              { role:'Head of Data',           reason:'78% of Series B peers have this role.',       when:'Q3 2026', cost:'$11.2k' },
+            ].map((x,i,a) => (
+              <div key={i} style={{ display:'grid', gridTemplateColumns:'1fr auto auto auto', gap:14, padding:'14px 16px', borderBottom:i<a.length-1?`1px solid ${S.lineSoft}`:'none', alignItems:'center' }}>
+                <div>
+                  <div style={{ fontSize:13, color:S.ink, fontWeight:500 }}>{x.role}</div>
+                  <div style={{ fontSize:12, color:S.inkMuted, marginTop:2 }}>{x.reason}</div>
+                </div>
+                <div style={{ fontSize:12, color:S.inkMuted, fontFamily:S.mono }}>{x.when}</div>
+                <div style={{ fontSize:12, color:S.ink, fontFamily:S.mono, fontWeight:500 }}>{x.cost}/mo</div>
+                <button style={{ padding:'6px 12px', background:S.surface, color:S.ink, border:`1px solid ${S.line}`, borderRadius:6, fontSize:12, fontWeight:500, cursor:'pointer' }}>Add</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function Contribute({ setNav }) {
+      const [step, setStep] = useState(1);
+      const [uploaded, setUploaded] = useState(false);
+      if (step === 4) return (
+        <div style={{ padding:'60px 28px', maxWidth:640, margin:'0 auto', textAlign:'center' }}>
+          <div style={{ width:48, height:48, borderRadius:24, background:S.accent, color:'#fff', margin:'0 auto 18px', display:'grid', placeItems:'center', fontSize:22 }}>✓</div>
+          <div style={{ fontSize:24, fontWeight:600, color:S.ink, marginBottom:8, letterSpacing:-0.3 }}>Submission received</div>
+          <div style={{ fontSize:13, color:S.inkMuted, marginBottom:26, lineHeight:1.5 }}>62 records queued. Merged into your cohort in 24h. Deep filters and trend reports are unlocked.</div>
+          <div style={{ display:'flex', gap:8, justifyContent:'center' }}>
+            <button onClick={()=>setNav('comp')} style={{ padding:'10px 16px', background:S.accent, color:'#fff', border:'none', borderRadius:6, fontSize:13, fontWeight:500, cursor:'pointer' }}>Open explorer →</button>
+            <button onClick={()=>setNav('home')} style={{ padding:'10px 16px', background:S.surface, color:S.ink, border:`1px solid ${S.line}`, borderRadius:6, fontSize:13, cursor:'pointer' }}>Back to home</button>
+          </div>
+        </div>
+      );
+      return (
+        <div style={{ padding:'24px 28px 60px', maxWidth:820 }}>
+          <div style={{ fontSize:11, color:S.inkMuted, marginBottom:4 }}>Step {step} of 3</div>
+          <div style={{ fontSize:22, fontWeight:600, color:S.ink, letterSpacing:-0.3, marginBottom:4 }}>
+            {step===1&&'Upload headcount file'}{step===2&&'Confirm role mapping'}{step===3&&'Review data contract'}
+          </div>
+          <div style={{ fontSize:13, color:S.inkMuted, marginBottom:18 }}>
+            {step===1&&'CSV, Excel, or connect your HRIS. Hashed locally before leaving your browser.'}
+            {step===2&&'We matched 62/62. Review 2 flags below.'}
+            {step===3&&"What Pulso will and won't do with your data."}
+          </div>
+          <div style={{ display:'flex', gap:6, marginBottom:22 }}>
+            {[1,2,3].map(s=><div key={s} style={{ flex:1, height:3, borderRadius:2, background:s<=step?S.accent:S.lineSoft }} />)}
+          </div>
+          {step===1&&(
+            <div>
+              <div onClick={()=>setUploaded(true)} style={{ padding:36, background:S.surface, border:`2px dashed ${uploaded?S.good:S.line}`, borderRadius:10, textAlign:'center', cursor:'pointer' }}>
+                <div style={{ fontSize:16, fontWeight:600, color:S.ink }}>{uploaded?'headcount_q2_2026.csv · 62 rows':'Drop file here or click to browse'}</div>
+                <div style={{ fontSize:12, color:S.inkMuted, marginTop:4 }}>{uploaded?'Hashed locally · ready to process':'CSV, XLSX, or connect BambooHR / Rippling / Gusto'}</div>
+              </div>
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:16 }}>
+                <button onClick={()=>setNav('home')} style={{ padding:'9px 14px', background:S.surface, color:S.ink, border:`1px solid ${S.line}`, borderRadius:6, fontSize:13, cursor:'pointer' }}>Cancel</button>
+                <button disabled={!uploaded} onClick={()=>setStep(2)} style={{ padding:'9px 14px', background:uploaded?S.accent:S.lineSoft, color:uploaded?'#fff':S.inkMuted, border:'none', borderRadius:6, fontSize:13, fontWeight:500, cursor:uploaded?'pointer':'not-allowed' }}>Continue →</button>
+              </div>
+            </div>
+          )}
+          {step===2&&(
+            <div>
+              <div style={{ background:S.surface, border:`1px solid ${S.line}`, borderRadius:8, overflow:'hidden' }}>
+                <div style={{ display:'grid', gridTemplateColumns:'1.6fr 1.6fr 70px 80px', gap:12, padding:'10px 14px', background:S.bg, fontSize:11, fontWeight:600, color:S.inkMuted, textTransform:'uppercase', letterSpacing:0.4, borderBottom:`1px solid ${S.line}` }}>
+                  <div>Your title</div><div>Pulso canonical</div><div style={{textAlign:'right'}}>People</div><div style={{textAlign:'right'}}>Match</div>
+                </div>
+                {[
+                  {a:'Backend Engineer Ssr.',b:'Senior Software Engineer',n:14,m:98},
+                  {a:'Product Designer II',b:'Product Designer (Senior)',n:3,m:94},
+                  {a:'Growth Marketer',b:'Marketing Lead',n:1,m:71,flag:true},
+                  {a:'Chief of Staff',b:'Operations Manager',n:1,m:62,flag:true},
+                  {a:'Engineering Manager',b:'Engineering Manager',n:3,m:100},
+                ].map((r,i,a)=>(
+                  <div key={i} style={{ display:'grid', gridTemplateColumns:'1.6fr 1.6fr 70px 80px', gap:12, padding:'11px 14px', borderBottom:i<a.length-1?`1px solid ${S.lineSoft}`:'none', fontSize:13, alignItems:'center' }}>
+                    <div style={{color:S.ink}}>{r.a}</div>
+                    <div style={{color:S.inkSoft}}>{r.b}{r.flag&&<span style={{marginLeft:6,fontSize:10,padding:'1px 6px',background:`${S.watch}20`,color:S.watch,borderRadius:4}}>review</span>}</div>
+                    <div style={{fontFamily:S.mono,fontSize:11,color:S.inkMuted,textAlign:'right'}}>{r.n}</div>
+                    <div style={{fontFamily:S.mono,fontSize:11,textAlign:'right',color:r.m>=90?S.good:r.m>=70?S.watch:S.bad,fontWeight:500}}>{r.m}%</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:16 }}>
+                <button onClick={()=>setStep(1)} style={{ padding:'9px 14px', background:S.surface, color:S.ink, border:`1px solid ${S.line}`, borderRadius:6, fontSize:13, cursor:'pointer' }}>Back</button>
+                <button onClick={()=>setStep(3)} style={{ padding:'9px 14px', background:S.accent, color:'#fff', border:'none', borderRadius:6, fontSize:13, fontWeight:500, cursor:'pointer' }}>Continue →</button>
+              </div>
+            </div>
+          )}
+          {step===3&&(
+            <div>
+              <div style={{ padding:22, background:S.surface, border:`1px solid ${S.line}`, borderRadius:8 }}>
+                {[
+                  {t:'Aggregation minimum',d:'Your figures appear in cohorts of 8+ peers.'},
+                  {t:'Hashing',d:'Names and employee IDs are SHA-256 hashed client-side.'},
+                  {t:'Data ownership',d:'Delete your contribution from your profile any time.'},
+                  {t:'No resale',d:"We don't sell row-level data."},
+                ].map((x,i,a)=>(
+                  <div key={i} style={{ display:'grid', gridTemplateColumns:'20px 1fr', gap:12, padding:'10px 0', borderBottom:i<a.length-1?`1px solid ${S.lineSoft}`:'none' }}>
+                    <div style={{ marginTop:5, width:10, height:10, borderRadius:5, background:S.accent }} />
+                    <div>
+                      <div style={{ fontSize:14, color:S.ink, fontWeight:500 }}>{x.t}</div>
+                      <div style={{ fontSize:12, color:S.inkMuted, marginTop:3 }}>{x.d}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display:'flex', justifyContent:'flex-end', gap:8, marginTop:16 }}>
+                <button onClick={()=>setStep(2)} style={{ padding:'9px 14px', background:S.surface, color:S.ink, border:`1px solid ${S.line}`, borderRadius:6, fontSize:13, cursor:'pointer' }}>Back</button>
+                <button onClick={()=>setStep(4)} style={{ padding:'9px 14px', background:S.accent, color:'#fff', border:'none', borderRadius:6, fontSize:13, fontWeight:500, cursor:'pointer' }}>Sign & contribute →</button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function Settings() {
+      return (
+        <div style={{ padding:'24px 28px 60px', maxWidth:720 }}>
+          <div style={{ fontSize:22, fontWeight:600, color:S.ink, letterSpacing:-0.3, marginBottom:16 }}>Company profile</div>
+          <div style={{ background:S.surface, border:`1px solid ${S.line}`, borderRadius:8, overflow:'hidden' }}>
+            {[
+              {k:'Name',v:'Mirador Labs'},
+              {k:'Industry',v:'Fintech'},
+              {k:'Stage',v:'Series A · Nov 2025 · USD 14M'},
+              {k:'HQ',v:'Buenos Aires, Argentina'},
+              {k:'Headcount',v:'62 · 7 open reqs'},
+              {k:'Cohort',v:'Fintech · Series A · LATAM · 40–120 FTE'},
+            ].map((x,i,a)=>(
+              <div key={i} style={{ display:'grid', gridTemplateColumns:'160px 1fr auto', gap:12, padding:'14px 16px', borderBottom:i<a.length-1?`1px solid ${S.lineSoft}`:'none', alignItems:'center' }}>
+                <div style={{ fontSize:11, color:S.inkMuted, fontWeight:600, textTransform:'uppercase', letterSpacing:0.4 }}>{x.k}</div>
+                <div style={{ fontSize:13, color:S.ink }}>{x.v}</div>
+                <button style={{ fontSize:12, background:'transparent', border:'none', cursor:'pointer', color:S.accent, fontWeight:500 }}>Edit</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [nav, setNav] = useState('home');
+      const [selectedRoleId, setSelectedRoleId] = useState('eng-sr');
+      const [filters, setFilters] = useState({ fn: 'All', level: 'All', country: 'AR' });
+      const showOrg = true;
+
+      useEffect(() => {
+        if (!showOrg && (nav === 'org' || nav === 'ratios')) setNav('home');
+      }, [showOrg, nav]);
+
+      let content;
+      if (nav === 'home')                     content = <Home setNav={setNav} showOrg={showOrg} />;
+      else if (nav === 'comp')                content = <Comp setNav={setNav} setSelectedRoleId={setSelectedRoleId} filters={filters} setFilters={setFilters} />;
+      else if (nav === 'role')                content = <RoleDetail setNav={setNav} selectedRoleId={selectedRoleId} />;
+      else if (nav === 'bands')               content = <Bands />;
+      else if (nav === 'org' || nav==='ratios') content = <Org />;
+      else if (nav === 'contribute')          content = <Contribute setNav={setNav} />;
+      else if (nav === 'settings')            content = <Settings />;
+
+      return (
+        <div style={{ display:'grid', gridTemplateColumns:'220px 1fr', minHeight:'100vh', background:S.bg, fontFamily:S.font, color:S.ink }}>
+          <Sidebar nav={nav} setNav={setNav} showOrg={showOrg} />
+          <div style={{ display:'flex', flexDirection:'column', minHeight:'100%' }}>
+            <Topbar />
+            <div style={{ flex:1, overflow:'auto' }}>{content}</div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
